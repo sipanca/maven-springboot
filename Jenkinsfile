@@ -1,9 +1,22 @@
+    // node {
+    //     def app
+
+    //     stage ('Clone Repository') {
+    //         checkout scm
+    //     }
+
+    //     stage ('Build Docker Image') {
+
+    //     }
+    // }
+
+
 pipeline {
     agent any 
 
     environment {
         appsName = "demo"
-        version =  ${env.BUILD_NUMBER} //"${GIT_COMMIT}"
+        version =  "${env.BUILD_NUMBER}" //"${GIT_COMMIT}"
         dockerImage = "${appsName}:${version}"
         registry = "pancaaa/$appsName"
         registryCredential = 'dockerhublogin'
@@ -43,8 +56,10 @@ pipeline {
         }
 
         stage('Trigger Update Manifest') {
-            echo "triggering Update manifest Job"
+            steps{
                 build job: 'springboot-demo-cd', parameters: [string(name: 'DOCKERTAG', value: "$version")]
+            }
+            
         }
 
         // stage('Deploy to Kube Cluster'){
